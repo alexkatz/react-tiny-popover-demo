@@ -1,0 +1,24 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;1,300;1,400;1,700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: black;
+    color: white;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  #root {
+    overflow-y: hidden;
+    overflow-x: hidden;
+    display: flex;
+  }
+}
