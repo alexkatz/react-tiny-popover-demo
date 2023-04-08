@@ -9,8 +9,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@react-spring/web": "^9.7.2",
+    "@use-gesture/react": "^10.2.25",
+    "clsx": "^1.2.1",
+    "jotai": "^2.0.3",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-tiny-popover": "^7.2.4"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",
