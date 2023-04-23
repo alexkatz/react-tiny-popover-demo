@@ -1,11 +1,12 @@
 import { useDrag } from '@use-gesture/react';
-import { SpringProps, useSpringValue } from '@react-spring/web';
+import { type SpringProps, useSpringValue } from '@react-spring/web';
 import { useState } from 'react';
 
 const BOX_COLOR = {
   dragging: '#1a1a1a',
   idle: '#000000',
 };
+
 const springProps: SpringProps = {
   config: {
     tension: 300,
@@ -16,17 +17,26 @@ const springProps: SpringProps = {
 
 export const useBoxDrag = () => {
   const [isBoxDragging, setIsBoxDragging] = useState(false);
-  const translateX = useSpringValue(0, springProps);
-  const translateY = useSpringValue(0, springProps);
+  const translateX = useSpringValue(50, springProps);
+  const translateY = useSpringValue(50, springProps);
   const boxColor = useSpringValue(BOX_COLOR.idle);
 
-  const bindBoxDrag = useDrag(({ active, offset: [x, y], first }) => {
-    // TODO: return a memo that stores the initial box position and use that throughout the drag
-    setIsBoxDragging(active);
-    translateX.start(first ? translateX.get() + x : x);
-    translateY.start(first ? translateY.get() + y : y);
-    boxColor.start(active ? BOX_COLOR.dragging : BOX_COLOR.idle);
-  });
+  const bindBoxDrag = useDrag<MouseEvent | TouchEvent>(
+    ({ active, delta: [dx, dy], movement: [mx, my], initial: [ix, iy], offset: [ox, oy] }) => {
+      console.log('delta', dx, dy);
+      console.log('movement', mx, my);
+      console.log('offset', ox, oy);
+      console.log('initial', ix, iy);
+
+      setIsBoxDragging(active);
+      translateX.start(mx);
+      translateY.start(my);
+      boxColor.start(active ? BOX_COLOR.dragging : BOX_COLOR.idle);
+    },
+    {
+      from: [translateX.get(), translateY.get()],
+    },
+  );
 
   return {
     isBoxDragging,

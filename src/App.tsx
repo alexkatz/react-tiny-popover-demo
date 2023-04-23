@@ -1,13 +1,15 @@
 import { animated } from '@react-spring/web';
-import { useBindContainerDrag } from './useContainerDrag';
-import { useBoxDrag } from './useBoxDrag';
-import { Popover } from 'react-tiny-popover';
 import { useRef } from 'react';
+import { Popover } from 'react-tiny-popover';
+import { useBoxDrag } from './useBoxDrag';
+import { useBindContainerDrag } from './useContainerDrag';
 
 export const App = () => {
-  const { isBoxDragging, boxProps } = useBoxDrag();
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const { isBoxDragging, boxProps } = useBoxDrag();
   const { containerProps } = useBindContainerDrag({ enabled: !isBoxDragging });
+
   return (
     <div className='relative flex-1'>
       <animated.div
