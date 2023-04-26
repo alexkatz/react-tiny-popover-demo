@@ -19,13 +19,13 @@ export const App = () => {
       >
         <Popover
           isOpen
-          content={<div className='h-52 w-52 bg-red-400/50'>test</div>}
+          content={<div className='h-52 w-52 bg-blue-400/50'>test</div>}
           boundaryElement={containerRef.current ?? undefined}
           parentElement={containerRef.current ?? undefined}
           padding={8}
         >
           <animated.div
-            className='fixed h-32 w-32 cursor-pointer touch-none border-2 border-white'
+            className='fixed h-32 w-32 cursor-pointer touch-none border-2 border-white will-change-transform'
             {...boxProps}
           />
         </Popover>

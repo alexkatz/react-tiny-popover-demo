@@ -3,7 +3,7 @@ import { type SpringProps, useSpringValue } from '@react-spring/web';
 import { useState } from 'react';
 
 const BOX_COLOR = {
-  dragging: '#1a1a1a',
+  dragging: '#4a4a4a',
   idle: '#000000',
 };
 
@@ -17,20 +17,15 @@ const springProps: SpringProps = {
 
 export const useBoxDrag = () => {
   const [isBoxDragging, setIsBoxDragging] = useState(false);
-  const translateX = useSpringValue(50, springProps);
-  const translateY = useSpringValue(50, springProps);
+  const translateX = useSpringValue(200, springProps);
+  const translateY = useSpringValue(200, springProps);
   const boxColor = useSpringValue(BOX_COLOR.idle);
 
   const bindBoxDrag = useDrag<MouseEvent | TouchEvent>(
-    ({ active, delta: [dx, dy], movement: [mx, my], initial: [ix, iy], offset: [ox, oy] }) => {
-      console.log('delta', dx, dy);
-      console.log('movement', mx, my);
-      console.log('offset', ox, oy);
-      console.log('initial', ix, iy);
-
+    ({ active, offset: [ox, oy] }) => {
       setIsBoxDragging(active);
-      translateX.start(mx);
-      translateY.start(my);
+      translateX.start(ox);
+      translateY.start(oy);
       boxColor.start(active ? BOX_COLOR.dragging : BOX_COLOR.idle);
     },
     {
