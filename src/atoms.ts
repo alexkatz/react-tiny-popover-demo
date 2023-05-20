@@ -2,7 +2,7 @@ import { atom } from 'jotai';
 import { PopoverPosition, PopoverProps, PopoverAlign } from 'react-tiny-popover';
 
 export const paddingAtom = atom<number | undefined>(10);
-export const isOpenAtom = atom(false);
+export const isOpenAtom = atom(true);
 export const alignAtom = atom<PopoverAlign>('center');
 export const positionAtom = atom<PopoverPosition>('top');
 

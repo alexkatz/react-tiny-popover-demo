@@ -1,7 +1,7 @@
 import { twMerge } from 'tailwind-merge';
 import { Field } from './Field';
 import { useAtom } from 'jotai';
-import { alignAtom, paddingAtom, positionAtom } from './atoms';
+import { alignAtom, isOpenAtom, paddingAtom, positionAtom } from './atoms';
 import { classed } from '@tw-classed/react';
 import { PopoverAlign, PopoverPosition } from 'react-tiny-popover';
 import { ComponentProps, useCallback, useMemo } from 'react';
@@ -25,6 +25,9 @@ export const Fields = ({ className }: Props) => {
   const [padding, setPadding] = useAtom(paddingAtom);
   const [position, setPosition] = useAtom(positionAtom);
   const [align, setAlign] = useAtom(alignAtom);
+  const [isOpen, setIsOpen] = useAtom(isOpenAtom);
+
+  const handleOpenClick = useCallback(() => setIsOpen(prev => !prev), [setIsOpen]);
 
   const handlePositionClick = useCallback(() => {
     const index = POSITIONS.indexOf(position);
@@ -52,6 +55,11 @@ export const Fields = ({ className }: Props) => {
 
   return (
     <div className={twMerge('flex gap-2', className)}>
+      <Field label='Open'>
+        <Button className='w-[4.5rem]' onClick={handleOpenClick}>
+          {isOpen ? 'Open' : 'Closed'}
+        </Button>
+      </Field>
       <Field label='position'>
         <Button className='w-[4.5rem]' onClick={handlePositionClick}>
           {position}

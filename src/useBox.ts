@@ -16,7 +16,11 @@ const springProps: SpringProps = {
   },
 };
 
-export const useBox = () => {
+type Props = {
+  onClickWithoutDrag?(): void;
+};
+
+export const useBox = ({ onClickWithoutDrag }: Props = {}) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const translateX = useSpringValue(400, springProps);
@@ -34,10 +38,16 @@ export const useBox = () => {
   });
 
   const bindDrag = useDrag<MouseEvent | TouchEvent>(
-    ({ active, offset: [ox, oy] }) => {
+    ({ active, offset: [ox, oy], memo, first }) => {
       setIsDragging(active);
       translateX.start(ox);
       translateY.start(oy);
+
+      if (!active && memo.ox === ox && memo.oy === oy) {
+        onClickWithoutDrag?.();
+      }
+
+      return first ? { ox, oy } : memo;
     },
     {
       from: [translateX.get(), translateY.get()],

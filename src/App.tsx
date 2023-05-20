@@ -1,12 +1,13 @@
-import { animated } from '@react-spring/web';
-import { useCallback, useRef } from 'react';
+import { animated, useSpring } from '@react-spring/web';
+import { useCallback, useRef, useState } from 'react';
 import { Popover, PopoverState } from 'react-tiny-popover';
 import { classed } from '@tw-classed/react';
 import { useBox } from './useBox';
 import { useBoxContainer } from './useBoxContainer';
 import { Fields } from './Fields';
-import { useAtomValue } from 'jotai';
-import { alignAtom, paddingAtom, positionsAtom } from './atoms';
+import { useAtom, useAtomValue } from 'jotai';
+import { useDebounce } from 'use-debounce';
+import { alignAtom, isOpenAtom, paddingAtom, positionsAtom } from './atoms';
 
 const LabelContainer = classed.div('flex flex-1 items-center gap-1 ml-1 p-1');
 const Label = classed.label('opacity-50');
@@ -14,16 +15,34 @@ const Value = classed.div('');
 
 export const App = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isOpen, setIsOpen] = useAtom(isOpenAtom);
+  const [isOpenDebounced] = useDebounce(isOpen, 200);
   const padding = useAtomValue(paddingAtom);
   const positions = useAtomValue(positionsAtom);
   const align = useAtomValue(alignAtom);
 
-  const { isBoxDragging, boxProps } = useBox();
+  const { isBoxDragging, boxProps } = useBox({
+    onClickWithoutDrag: useCallback(() => setIsOpen(prev => !prev), [setIsOpen]),
+  });
+
   const { containerProps } = useBoxContainer({ enabled: !isBoxDragging });
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const [{ popoverOpacity }] = useSpring(
+    () => ({
+      popoverOpacity: isOpen ? 1 : 0,
+      onStart: () => setIsAnimating(true),
+      onRest: () => setIsAnimating(false),
+    }),
+    [isOpen],
+  );
 
   const handleContent = useCallback(
     ({ position, align, padding, nudgedLeft, nudgedTop }: PopoverState) => (
-      <div className='flex h-48 w-48 flex-col rounded-md bg-blue-400/50'>
+      <animated.div
+        style={{ opacity: popoverOpacity }}
+        className='flex h-48 w-48 flex-col rounded-md bg-blue-400/50'
+      >
         <LabelContainer>
           <Label>position:</Label>
           <Value>{position}</Value>
@@ -48,9 +67,9 @@ export const App = () => {
           <Label>nudgedTop:</Label>
           <Value>{nudgedTop.toFixed(2)}</Value>
         </LabelContainer>
-      </div>
+      </animated.div>
     ),
-    [],
+    [popoverOpacity],
   );
 
   return (
@@ -62,7 +81,7 @@ export const App = () => {
         ref={containerRef}
       >
         <Popover
-          isOpen
+          isOpen={isOpen || isOpenDebounced || isAnimating}
           content={handleContent}
           boundaryElement={containerRef.current ?? undefined}
           parentElement={containerRef.current ?? undefined}
@@ -71,9 +90,11 @@ export const App = () => {
           align={align}
         >
           <animated.div
-            className='fixed h-32 w-32 cursor-pointer touch-none rounded-md border-2 border-white will-change-transform'
+            className='fixed flex h-32 w-32 cursor-pointer touch-none select-none items-center justify-center rounded-md border-2 border-white text-xs text-white/50 will-change-transform'
             {...boxProps}
-          />
+          >
+            click or drag me!
+          </animated.div>
         </Popover>
       </animated.div>
     </div>
