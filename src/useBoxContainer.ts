@@ -60,7 +60,7 @@ type Props = {
   enabled: boolean;
 };
 
-export const useBindContainerDrag = ({ enabled }: Props) => {
+export const useBoxContainer = ({ enabled }: Props) => {
   const containerInset = useSpringValue(100);
   const bindContainerDrag = useDrag(
     ({ xy: [x, y], movement: [dx, dy], currentTarget, memo: m }) => {

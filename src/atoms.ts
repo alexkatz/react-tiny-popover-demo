@@ -1,10 +1,27 @@
 import { atom } from 'jotai';
-import { PopoverProps } from 'react-tiny-popover';
+import { PopoverPosition, PopoverProps, PopoverAlign } from 'react-tiny-popover';
 
-export const paddingAdom = atom(10);
+export const paddingAtom = atom<number | undefined>(10);
 export const isOpenAtom = atom(false);
-export const alignAtom = atom<PopoverProps['align']>('center');
-export const positionsAtom = atom<PopoverProps['positions']>(['top', 'left', 'bottom', 'right']);
+export const alignAtom = atom<PopoverAlign>('center');
+export const positionAtom = atom<PopoverPosition>('top');
+
+export const positionsAtom = atom<PopoverPosition[]>(get => {
+  const position = get(positionAtom);
+  if (position === 'top') {
+    return ['top', 'right', 'bottom', 'left'];
+  }
+  if (position === 'bottom') {
+    return ['bottom', 'left', 'top', 'right'];
+  }
+
+  if (position === 'left') {
+    return ['left', 'top', 'right', 'bottom'];
+  }
+
+  return ['right', 'bottom', 'left', 'top'];
+});
+
 export const boundaryInsetAtom = atom(0);
 export const repositionAtom = atom(true);
 export const containerClassNameAtom = atom('react-tiny-popover-container');
