@@ -3,9 +3,9 @@ import { type SpringProps, useSpringValue, useSpring } from '@react-spring/web';
 import { useState } from 'react';
 
 const BOX_COLOR = {
-  dragging: '#6a6a6a',
+  dragging: '#4a5a6a',
   idle: '#000000',
-  hovering: '#3a3a3a',
+  hovering: '#1a2a3a',
 };
 
 const springProps: SpringProps = {
@@ -56,6 +56,7 @@ export const useBox = ({ onClickWithoutDrag }: Props = {}) => {
 
   return {
     isBoxDragging: isDragging,
+    isBoxHovering: isHovering,
     boxProps: {
       ...bindDrag(),
       ...bindHover(),

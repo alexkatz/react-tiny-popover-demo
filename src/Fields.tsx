@@ -12,6 +12,8 @@ import {
   repositionAtom,
   containerClassNameAtom,
   fixedLocationAtom,
+  contentLocationLeftAtom,
+  contentLocationTopAtom,
 } from './atoms';
 import { classed } from '@tw-classed/react';
 import { PopoverAlign, PopoverPosition } from 'react-tiny-popover';
@@ -25,7 +27,7 @@ const Input = classed.input(
 );
 
 const Button = classed.button(
-  'bg-gray-700 p-1 rounded-md focus:border-white/100 focus:outline-none',
+  'bg-blue-400 p-1 rounded-md focus:border-white/100 focus:outline-none',
 );
 
 const useNumericInputProps = (setter: (value: number | undefined) => void) =>
@@ -68,6 +70,8 @@ export const Fields = ({ className }: Props) => {
   const [shouldReposition, setShouldReposition] = useAtom(repositionAtom);
   const [containerClassName, setContainerClassName] = useAtom(containerClassNameAtom);
   const [isFixedLocation, setIsFixedLocation] = useAtom(fixedLocationAtom);
+  const [contentLocationLeft, setContentLocationLeft] = useAtom(contentLocationLeftAtom);
+  const [contentLocationTop, setContentLocationTop] = useAtom(contentLocationTopAtom);
 
   const handleOpenClick = useCallback(() => setIsOpen(prev => !prev), [setIsOpen]);
   const handlePositionClick = useToggleHandler(position, setPosition, POSITIONS);
@@ -76,9 +80,11 @@ export const Fields = ({ className }: Props) => {
   const boundaryInsetInputProps = useNumericInputProps(setBoundaryInset);
   const popoverWidthInputProps = useNumericInputProps(setPopoverWidth);
   const popoverheightInputProps = useNumericInputProps(setPopoverHeight);
+  const contentLocationLeftInputProps = useNumericInputProps(setContentLocationLeft);
+  const contentLocationTopInputProps = useNumericInputProps(setContentLocationTop);
 
   return (
-    <div className={twMerge('flex flex-wrap gap-2', className)}>
+    <div className={twMerge('flex flex-wrap gap-6', className)}>
       <Field label='Open'>
         <Button className='w-[4.5rem]' onClick={handleOpenClick}>
           {isOpen ? 'Open' : 'Closed'}
@@ -121,23 +127,45 @@ export const Fields = ({ className }: Props) => {
         />
       </Field>
 
-      <Field label='Popover Min Width'>
-        <Input
-          className='w-[4.5rem]'
-          type='number'
-          value={popoverWidth ?? ''}
-          {...popoverWidthInputProps}
-        />
-      </Field>
+      <div className='flex gap-2'>
+        <Field label='Popover Min Width'>
+          <Input
+            className='w-[4.5rem]'
+            type='number'
+            value={popoverWidth ?? ''}
+            {...popoverWidthInputProps}
+          />
+        </Field>
 
-      <Field label='Popover Min Height'>
-        <Input
-          className='w-[4.5rem]'
-          type='number'
-          value={popoverHeight ?? ''}
-          {...popoverheightInputProps}
-        />
-      </Field>
+        <Field label='Popover Min Height'>
+          <Input
+            className='w-[4.5rem]'
+            type='number'
+            value={popoverHeight ?? ''}
+            {...popoverheightInputProps}
+          />
+        </Field>
+      </div>
+
+      <div className='flex gap-2'>
+        <Field label='Content Location Left'>
+          <Input
+            className='w-[4.5rem]'
+            type='number'
+            value={contentLocationLeft ?? ''}
+            {...contentLocationLeftInputProps}
+          />
+        </Field>
+
+        <Field label='Content Location Top'>
+          <Input
+            className='w-[4.5rem]'
+            type='number'
+            value={contentLocationTop ?? ''}
+            {...contentLocationTopInputProps}
+          />
+        </Field>
+      </div>
 
       <Field label='Container Class Name'>
         <Input

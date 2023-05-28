@@ -11,6 +11,9 @@ import {
   alignAtom,
   boundaryInsetAtom,
   containerClassNameAtom,
+  contentLocationLeftAtom,
+  contentLocationTopAtom,
+  fixedLocationAtom,
   isOpenAtom,
   paddingAtom,
   popoverHeightAtom,
@@ -36,11 +39,15 @@ export const App = () => {
   const shouldReposition = useAtomValue(repositionAtom);
   const containerClassName = useAtomValue(containerClassNameAtom);
 
-  const { isBoxDragging, boxProps } = useBox({
+  const isFixedLocation = useAtomValue(fixedLocationAtom);
+  const fixedTop = useAtomValue(contentLocationTopAtom);
+  const fixedLeft = useAtomValue(contentLocationLeftAtom);
+
+  const { isBoxDragging, isBoxHovering, boxProps } = useBox({
     onClickWithoutDrag: useCallback(() => setIsOpen(prev => !prev), [setIsOpen]),
   });
 
-  const { containerProps } = useBoxContainer({ enabled: !isBoxDragging });
+  const { containerProps } = useBoxContainer({ enabled: !isBoxDragging && !isBoxHovering });
   const [isAnimating, setIsAnimating] = useState(false);
 
   const [{ popoverOpacity }] = useSpring(
@@ -56,7 +63,7 @@ export const App = () => {
     ({ position, align, padding, nudgedLeft, nudgedTop }: PopoverState) => (
       <animated.div
         style={{ opacity: popoverOpacity, minWidth: popoverWidth, minHeight: popoverHeight }}
-        className='flex h-48 w-48 flex-col rounded-md bg-blue-400/50'
+        className='flex h-48 w-48 flex-col rounded-md bg-blue-400/40'
       >
         <LabelContainer>
           <Label>position:</Label>
@@ -89,9 +96,9 @@ export const App = () => {
 
   return (
     <div className='relative flex-1'>
-      <Fields className='absolute left-0 right-0 top-0 mx-1' />
+      <Fields className='absolute left-4 right-4 top-4 mx-1 [&>*]:z-20' />
       <animated.div
-        className='absolute touch-none rounded-md border-2 border-blue-800'
+        className='absolute cursor-pointer touch-none rounded-md border-4 border-blue-400/50'
         {...containerProps}
         ref={containerRef}
       >
@@ -106,14 +113,20 @@ export const App = () => {
           align={align}
           boundaryInset={boundaryInset}
           reposition={shouldReposition}
+          contentLocation={
+            isFixedLocation ? { left: fixedLeft ?? 0, top: fixedTop ?? 0 } : undefined
+          }
         >
           <animated.div
-            className='fixed flex h-32 w-32 cursor-pointer touch-none select-none items-center justify-center rounded-md border-2 border-white text-xs text-white/50 will-change-transform'
+            className='fixed h-32 w-32 cursor-pointer touch-none rounded-md border-2 border-white will-change-transform'
             {...boxProps}
           >
-            click or drag me!
+            <span className='absolute bottom-1 left-1 select-none text-xs text-white/50'>
+              click or drag me!
+            </span>
           </animated.div>
         </Popover>
+        <div className='absolute bottom-1 left-1 select-none text-xs text-white/50'>drag me!</div>
       </animated.div>
     </div>
   );

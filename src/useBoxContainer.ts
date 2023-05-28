@@ -1,5 +1,12 @@
-import { useDrag } from '@use-gesture/react';
-import { useSpringValue } from '@react-spring/web';
+import { useDrag, useHover } from '@use-gesture/react';
+import { useSpring, useSpringValue } from '@react-spring/web';
+import { useState } from 'react';
+
+const BOX_COLOR = {
+  dragging: '#4a5a6a',
+  idle: '#000000',
+  hovering: '#1a2a3a',
+};
 
 type DragDirection = 'up' | 'down' | 'left' | 'right';
 type DragSide = 'top' | 'bottom' | 'left' | 'right';
@@ -61,9 +68,13 @@ type Props = {
 };
 
 export const useBoxContainer = ({ enabled }: Props) => {
-  const containerInset = useSpringValue(100);
-  const bindContainerDrag = useDrag(
-    ({ xy: [x, y], movement: [dx, dy], currentTarget, memo: m }) => {
+  const [isHovering, setIsHovering] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const containerInset = useSpringValue(200);
+
+  const bindDrag = useDrag(
+    ({ active, xy: [x, y], movement: [dx, dy], currentTarget, memo: m }) => {
+      setIsDragging(active);
       const memo = m as ContainerDragMemo;
       const target = currentTarget as HTMLElement;
 
@@ -101,11 +112,28 @@ export const useBoxContainer = ({ enabled }: Props) => {
     { enabled },
   );
 
+  const bindHover = useHover(({ active }) => setIsHovering(active));
+
+  const [{ boxColor }] = useSpring(
+    () => ({
+      boxColor: !enabled
+        ? BOX_COLOR.idle
+        : isDragging
+        ? BOX_COLOR.dragging
+        : isHovering
+        ? BOX_COLOR.hovering
+        : BOX_COLOR.idle,
+    }),
+    [isDragging, isHovering, enabled],
+  );
+
   return {
     containerProps: {
-      ...bindContainerDrag(),
+      ...bindDrag(),
+      ...bindHover(),
       style: {
         inset: containerInset,
+        backgroundColor: boxColor,
       },
     },
   } as const;
