@@ -7,7 +7,17 @@ import { useBoxContainer } from './useBoxContainer';
 import { Fields } from './Fields';
 import { useAtom, useAtomValue } from 'jotai';
 import { useDebounce } from 'use-debounce';
-import { alignAtom, isOpenAtom, paddingAtom, positionsAtom } from './atoms';
+import {
+  alignAtom,
+  boundaryInsetAtom,
+  containerClassNameAtom,
+  isOpenAtom,
+  paddingAtom,
+  popoverHeightAtom,
+  popoverWidthAtom,
+  positionsAtom,
+  repositionAtom,
+} from './atoms';
 
 const LabelContainer = classed.div('flex flex-1 items-center gap-1 ml-1 p-1');
 const Label = classed.label('opacity-50');
@@ -20,6 +30,11 @@ export const App = () => {
   const padding = useAtomValue(paddingAtom);
   const positions = useAtomValue(positionsAtom);
   const align = useAtomValue(alignAtom);
+  const boundaryInset = useAtomValue(boundaryInsetAtom);
+  const popoverWidth = useAtomValue(popoverWidthAtom) ?? 0;
+  const popoverHeight = useAtomValue(popoverHeightAtom) ?? 0;
+  const shouldReposition = useAtomValue(repositionAtom);
+  const containerClassName = useAtomValue(containerClassNameAtom);
 
   const { isBoxDragging, boxProps } = useBox({
     onClickWithoutDrag: useCallback(() => setIsOpen(prev => !prev), [setIsOpen]),
@@ -40,7 +55,7 @@ export const App = () => {
   const handleContent = useCallback(
     ({ position, align, padding, nudgedLeft, nudgedTop }: PopoverState) => (
       <animated.div
-        style={{ opacity: popoverOpacity }}
+        style={{ opacity: popoverOpacity, minWidth: popoverWidth, minHeight: popoverHeight }}
         className='flex h-48 w-48 flex-col rounded-md bg-blue-400/50'
       >
         <LabelContainer>
@@ -69,7 +84,7 @@ export const App = () => {
         </LabelContainer>
       </animated.div>
     ),
-    [popoverOpacity],
+    [popoverHeight, popoverOpacity, popoverWidth],
   );
 
   return (
@@ -85,9 +100,12 @@ export const App = () => {
           content={handleContent}
           boundaryElement={containerRef.current ?? undefined}
           parentElement={containerRef.current ?? undefined}
+          containerClassName={containerClassName}
           padding={padding}
           positions={positions}
           align={align}
+          boundaryInset={boundaryInset}
+          reposition={shouldReposition}
         >
           <animated.div
             className='fixed flex h-32 w-32 cursor-pointer touch-none select-none items-center justify-center rounded-md border-2 border-white text-xs text-white/50 will-change-transform'
