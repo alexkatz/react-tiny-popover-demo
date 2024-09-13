@@ -11,15 +11,16 @@ import {
   alignAtom,
   boundaryInsetAtom,
   containerClassNameAtom,
-  contentLocationLeftAtom,
-  contentLocationTopAtom,
-  fixedLocationAtom,
+  transformLeftAtom,
+  transformTopAtom,
+  applyTransformAtom,
   isOpenAtom,
   paddingAtom,
   popoverHeightAtom,
   popoverWidthAtom,
   positionsAtom,
   repositionAtom,
+  transformModeAtom,
 } from './atoms';
 
 const LabelContainer = classed.div('flex flex-1 items-center gap-1 ml-1 p-1');
@@ -36,12 +37,13 @@ export const App = () => {
   const boundaryInset = useAtomValue(boundaryInsetAtom);
   const popoverWidth = useAtomValue(popoverWidthAtom) ?? 0;
   const popoverHeight = useAtomValue(popoverHeightAtom) ?? 0;
-  const shouldReposition = useAtomValue(repositionAtom);
+  const reposition = useAtomValue(repositionAtom);
   const containerClassName = useAtomValue(containerClassNameAtom);
 
-  const isFixedLocation = useAtomValue(fixedLocationAtom);
-  const fixedTop = useAtomValue(contentLocationTopAtom);
-  const fixedLeft = useAtomValue(contentLocationLeftAtom);
+  const shouldApplyTransform = useAtomValue(applyTransformAtom);
+  const transformMode = useAtomValue(transformModeAtom);
+  const transformTop = useAtomValue(transformTopAtom);
+  const transformLeft = useAtomValue(transformLeftAtom);
 
   const { isBoxDragging, isBoxHovering, boxProps } = useBox({
     onClickWithoutDrag: useCallback(() => setIsOpen(prev => !prev), [setIsOpen]),
@@ -105,15 +107,24 @@ export const App = () => {
         <Popover
           isOpen={isOpen || isOpenDebounced || isAnimating}
           content={handleContent}
-          boundaryElement={containerRef.current ?? undefined}
+          boundaryElement={
+            reposition === 'Parent'
+              ? (containerRef.current ?? undefined)
+              : reposition === 'Window'
+                ? document.body
+                : undefined
+          }
           parentElement={containerRef.current ?? undefined}
           containerClassName={containerClassName}
           padding={padding}
           positions={positions}
           align={align}
           boundaryInset={boundaryInset}
-          reposition={shouldReposition}
-          transform={isFixedLocation ? { left: fixedLeft ?? 0, top: fixedTop ?? 0 } : undefined}
+          reposition={reposition !== 'Off'}
+          transform={
+            shouldApplyTransform ? { left: transformLeft ?? 0, top: transformTop ?? 0 } : undefined
+          }
+          transformMode={transformMode}
         >
           <animated.div
             className='fixed h-32 w-32 cursor-pointer touch-none rounded-md border-2 border-white will-change-transform'

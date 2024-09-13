@@ -23,13 +23,14 @@ export const positionsAtom = atom<PopoverPosition[]>(get => {
 });
 
 export const boundaryInsetAtom = atom<number | undefined>(10);
-export const repositionAtom = atom(true);
+export const repositionAtom = atom<'Parent' | 'Window' | 'Off'>('Parent');
 export const containerClassNameAtom = atom('react-tiny-popover-container');
 
-export const fixedLocationAtom = atom(false);
+export const applyTransformAtom = atom(false);
+export const transformModeAtom = atom<'relative' | 'absolute'>('absolute');
 
-export const contentLocationLeftAtom = atom<number | undefined>(50);
-export const contentLocationTopAtom = atom<number | undefined>(50);
+export const transformLeftAtom = atom<number | undefined>(0);
+export const transformTopAtom = atom<number | undefined>(0);
 
 export const popoverWidthAtom = atom<number | undefined>(100);
 export const popoverHeightAtom = atom<number | undefined>(100);

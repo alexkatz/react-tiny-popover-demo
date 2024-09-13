@@ -7,7 +7,7 @@ type Props = PropsWithChildren<{
 }>;
 
 export const Field = ({ label, className, children }: Props) => (
-  <div className={clsx('flex flex-col gap-1 p-1', className)}>
+  <div className={clsx('flex flex-col p-1', className)}>
     <label className='flex text-sm opacity-60'>{label}</label>
     {children}
   </div>
