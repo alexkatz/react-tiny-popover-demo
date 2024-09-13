@@ -113,9 +113,7 @@ export const App = () => {
           align={align}
           boundaryInset={boundaryInset}
           reposition={shouldReposition}
-          contentLocation={
-            isFixedLocation ? { left: fixedLeft ?? 0, top: fixedTop ?? 0 } : undefined
-          }
+          transform={isFixedLocation ? { left: fixedLeft ?? 0, top: fixedTop ?? 0 } : undefined}
         >
           <animated.div
             className='fixed h-32 w-32 cursor-pointer touch-none rounded-md border-2 border-white will-change-transform'
