@@ -96,6 +96,12 @@ export const Fields = ({ className }: Props) => {
           </Button>
         </Field>
 
+        <Field label='Align'>
+          <Button className='w-[4.5rem]' onClick={handleAlignClick}>
+            {align}
+          </Button>
+        </Field>
+
         <Field label='Padding'>
           <Input
             className='w-[4.5rem]'
@@ -121,12 +127,6 @@ export const Fields = ({ className }: Props) => {
             value={popoverHeight ?? ''}
             {...popoverheightInputProps}
           />
-        </Field>
-
-        <Field label='Align'>
-          <Button className='w-[4.5rem]' onClick={handleAlignClick}>
-            {align}
-          </Button>
         </Field>
       </div>
 
